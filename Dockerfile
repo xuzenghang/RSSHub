@@ -88,7 +88,7 @@ ARG PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=0
 # https://github.com/puppeteer/puppeteer#q-why-doesnt-puppeteer-vxxx-work-with-chromium-vyyy
 RUN \
     set -ex ; \
-    if [ "$PUPPETEER_SKIP_CHROMIUM_DOWNLOAD" = 0 ] && [ "$TARGETPLATFORM" = 'linux/amd64' ]; then \
+    if [ "$PUPPETEER_SKIP_CHROMIUM_DOWNLOAD" = 0 ] ; then \
         if [ "$USE_CHINA_NPM_REGISTRY" = 1 ]; then \
             npm config set registry https://registry.npmmirror.com && \
             yarn config set registry https://registry.npmmirror.com ; \
@@ -114,7 +114,7 @@ WORKDIR /app
 
 # install deps first to avoid cache miss or disturbing buildkit to build concurrently
 ARG TARGETPLATFORM
-ARG PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=1
+ARG PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=0
 # https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#chrome-headless-doesnt-launch-on-unix
 # https://github.com/puppeteer/puppeteer/issues/7822
 # https://www.debian.org/releases/bullseye/amd64/release-notes/ch-information.en.html#noteworthy-obsolete-packages
@@ -127,7 +127,7 @@ RUN \
         dumb-init \
     ; \
     if [ "$PUPPETEER_SKIP_CHROMIUM_DOWNLOAD" = 0 ]; then \
-        if [ "$TARGETPLATFORM" = 'linux/amd64' ]; then \
+        if [ "$PUPPETEER_SKIP_CHROMIUM_DOWNLOAD" = 0 ]; then \
             apt-get install -yq --no-install-recommends \
                 ca-certificates fonts-liberation wget xdg-utils \
                 libasound2 libatk-bridge2.0-0 libatk1.0-0 libatspi2.0-0 libcairo2 libcups2 libdbus-1-3 libdrm2 \
@@ -148,7 +148,7 @@ COPY --from=chromium-downloader /app/node_modules/puppeteer-core /app/node_modul
 # if grep matches nothing then it will exit with 1, thus, we cannot `set -e` here
 RUN \
     set -x && \
-    if [ "$PUPPETEER_SKIP_CHROMIUM_DOWNLOAD" = 0 ] && [ "$TARGETPLATFORM" = 'linux/amd64' ]; then \
+    if [ "$PUPPETEER_SKIP_CHROMIUM_DOWNLOAD" = 0 ] ; then \
         echo 'Verifying Chromium installation...' && \
         ldd $(find /app/node_modules/puppeteer-core/ -name chrome) | grep "not found" ; \
         if [ "$?" = 0 ]; then \
