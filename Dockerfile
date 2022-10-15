@@ -20,7 +20,7 @@ COPY ./package.json /app/
 # lazy install Chromium to avoid cache miss, only install production dependencies to minimize the image size
 RUN \
     set -ex && \
-    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true && \
+    export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=false && \
     yarn install --production --frozen-lockfile --network-timeout 1000000 && \
     yarn cache clean
 
